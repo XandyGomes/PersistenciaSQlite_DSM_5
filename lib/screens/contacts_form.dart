@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:projetopersistencia/models/contact.dart';
 
-class ContactForm extends StatelessWidget {
+class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
 
   @override
-  Widget build(Object context) {
+  State<ContactForm> createState() => _ContactFormState();
+}
+
+class _ContactFormState extends State<ContactForm> {
+  final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _accountNumberController =
+      TextEditingController();
+
+  @override
+  Widget build(Object Buldcontext) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(0, 48, 92, 1),
@@ -18,17 +29,19 @@ class ContactForm extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
                 labelText: 'Nome Completo',
               ),
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _accountNumberController,
+              decoration: const InputDecoration(
                 labelText: 'Número da Conta',
               ),
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
               keyboardType: TextInputType.number,
             ),
             Padding(
@@ -44,7 +57,12 @@ class ContactForm extends StatelessWidget {
                   child: const Text(
                     'Cadastrar',
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    final String name = _nameController.text;
+                    final int? accountNumber = int.tryParse(_accountNumberController.text);
+                    final Contact newContact = Contact(name, accountNumber!);
+                    Navigator.pop(context, newContact);
+                  },
                 ),
               ),
             ),
@@ -54,3 +72,4 @@ class ContactForm extends StatelessWidget {
     );
   }
 }
+
