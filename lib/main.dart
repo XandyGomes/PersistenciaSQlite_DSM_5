@@ -8,8 +8,8 @@ import 'package:projetopersistencia/screens/dashboard.dart';
 void main() {
   runApp(const MyApp());
   // save(Contact(0, 'Tetste', 4321)).then((id){
-  // });
     findAll().then((contacts) => debugPrint(contacts.toString()));
+  // });
 }
 
 class MyApp extends StatelessWidget {
