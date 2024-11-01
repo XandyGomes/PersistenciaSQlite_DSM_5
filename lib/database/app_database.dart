@@ -6,12 +6,17 @@ Future<Database> createDatabase() {
   return getDatabasesPath().then(
     (dbPath) {
       final String path = join(dbPath, 'banco.db');
-      return openDatabase(path, onCreate: (db, version) {
-        db.execute('CREATE TABLE contacts('
-            'id INTEGER PRIMARY KEY,'
-            'name TEXT,'
-            'account_number INTEGER)');
-      }, version: 1);
+      return openDatabase(
+        path,
+        version: 1,
+        onCreate: (db, version) {
+          db.execute('CREATE TABLE contacts('
+              'id INTEGER PRIMARY KEY,'
+              'name TEXT,'
+              'account_number INTEGER)');
+        },
+        // onDowngrade: onDatabaseDowngradeDelete,
+      );
     },
   );
 }
@@ -20,7 +25,6 @@ Future<int> save(Contact contact) {
   return createDatabase().then(
     (db) {
       final Map<String, dynamic> contactMap = Map();
-      contactMap['id'] = contact.id;
       contactMap['name'] = contact.name;
       contactMap['account_number'] = contact.account_number;
       return db.insert('contacts', contactMap);
