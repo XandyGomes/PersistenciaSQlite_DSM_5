@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:projetopersistencia/database/app_database.dart';
+import 'package:projetopersistencia/models/contact.dart';
 import 'package:projetopersistencia/screens/contacts_form.dart';
 
 class ContactsList extends StatelessWidget {
-  const ContactsList({super.key});
+  final List<Contact> contacts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +17,18 @@ class ContactsList extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontSize: 28),
         ),
       ),
-      body: ListView(
-        children: const [
-          Card(
-            child: ListTile(
-              title: Text(
-                'Alexandre',
-                style: TextStyle(fontSize: 24),
-              ),
-              subtitle: Text(
-                '1234',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ),
-        ],
+      body: FutureBuilder(
+        future: findAll(),
+        builder: (context, snapshot) {
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              final Contact contact = contacts[index];
+
+              return _ContactItem(contact);
+            },
+            itemCount: contacts.length,
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -50,6 +49,28 @@ class ContactsList extends StatelessWidget {
           Icons.add,
           color: Colors.white,
           size: 30,
+        ),
+      ),
+    );
+  }
+}
+
+class _ContactItem extends StatelessWidget {
+  final Contact contact;
+
+  const _ContactItem(this.contact);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          contact.name,
+          style: const TextStyle(fontSize: 24),
+        ),
+        subtitle: Text(
+          contact.account_number.toString(),
+          style: const TextStyle(fontSize: 16),
         ),
       ),
     );
