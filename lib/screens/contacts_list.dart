@@ -3,7 +3,12 @@ import 'package:projetopersistencia/database/app_database.dart';
 import 'package:projetopersistencia/models/contact.dart';
 import 'package:projetopersistencia/screens/contacts_form.dart';
 
-class ContactsList extends StatelessWidget {
+class ContactsList extends StatefulWidget {
+  @override
+  State<ContactsList> createState() => _ContactsListState();
+}
+
+class _ContactsListState extends State<ContactsList> {
   final List<Contact> contacts = [];
 
   @override
@@ -18,16 +23,43 @@ class ContactsList extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: findAll(),
+        initialData: [],
+        future: Future.delayed(Duration(seconds: 1)).then((value) => findAll()),
         builder: (context, snapshot) {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              final Contact contact = contacts[index];
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
 
-              return _ContactItem(contact);
-            },
-            itemCount: contacts.length,
-          );
+            case ConnectionState.waiting:
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text('Loading'),
+                  ],
+                ),
+              );
+              break;
+
+            case ConnectionState.active:
+              break;
+
+            case ConnectionState.done:
+              final List<Contact> contacts = snapshot.data as List<Contact>;
+
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  final Contact contact = contacts[index];
+
+                  return _ContactItem(contact);
+                },
+                itemCount: contacts.length,
+              );
+              break;
+          }
+          return Text('Unknown error');
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -39,9 +71,7 @@ class ContactsList extends StatelessWidget {
                 ),
               )
               .then(
-                (newContact) => debugPrint(
-                  newContact.toString(),
-                ),
+                (newContact) => setState(() {}),
               );
         },
         backgroundColor: const Color.fromRGBO(0, 48, 92, 1),
